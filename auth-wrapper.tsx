@@ -16,11 +16,11 @@ export default function AuthWrapper() {
     console.log("🔑 handleLogin called with role:", role)
 
     const roleMap: { [key: string]: number } = {
-      guest: 4, // Guest Dashboard
-      employee: 0, // Employee Dashboard
-      contributor: 1, // Contributor Dashboard
-      reviewer: 2, // Reviewer Dashboard
-      admin: 3, // Admin Dashboard
+      guest: 4, // Guest Dashboard (index 4)
+      employee: 0, // Employee Dashboard (index 0)
+      contributor: 1, // Contributor Dashboard (index 1)
+      reviewer: 2, // Reviewer Dashboard (index 2)
+      admin: 3, // Admin Dashboard (index 3)
     }
 
     const normalizedRole = role.toLowerCase().trim()
@@ -31,6 +31,7 @@ export default function AuthWrapper() {
 
     if (mappedRole === undefined) {
       console.error("❌ Unknown role:", role, "Available roles:", Object.keys(roleMap))
+      console.log("🔄 Defaulting to Employee (index 0)")
       setUserRole(0) // Default to Employee
     } else {
       console.log("✅ Setting userRole to:", mappedRole)
@@ -51,7 +52,8 @@ export default function AuthWrapper() {
 
   if (currentView === "dashboard") {
     console.log("🎨 Rendering KnowledgeHub with initialRole:", userRole)
-    return <KnowledgeHub initialRole={userRole} onLogout={handleLogout} />
+    // Force re-mount when userRole changes by using key
+    return <KnowledgeHub key={`hub-${userRole}`} initialRole={userRole} onLogout={handleLogout} />
   }
 
   switch (currentView) {

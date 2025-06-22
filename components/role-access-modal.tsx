@@ -23,16 +23,31 @@ interface RoleAccessModalProps {
   isOpen: boolean
   onClose: () => void
   targetRole: string
+  targetRoleIndex: number
   currentRole: string
-  onAccessGranted: () => void
+  onAccessGranted: (roleIndex: number) => void
 }
 
-export function RoleAccessModal({ isOpen, onClose, targetRole, currentRole, onAccessGranted }: RoleAccessModalProps) {
+export function RoleAccessModal({
+  isOpen,
+  onClose,
+  targetRole,
+  targetRoleIndex,
+  currentRole,
+  onAccessGranted,
+}: RoleAccessModalProps) {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [accessDuration, setAccessDuration] = useState("1hour")
   const [accessPurpose, setAccessPurpose] = useState("")
+
+  console.log("🎭 RoleAccessModal props:", {
+    isOpen,
+    targetRole,
+    targetRoleIndex,
+    currentRole,
+  })
 
   // Define role hierarchy and access requirements with exact role names
   const roleHierarchy = {
@@ -79,6 +94,12 @@ export function RoleAccessModal({ isOpen, onClose, targetRole, currentRole, onAc
       return
     }
 
+    // Validate target role index
+    if (targetRoleIndex < 0 || targetRoleIndex > 4) {
+      setError("Invalid target role. Please try again.")
+      return
+    }
+
     setIsLoading(true)
     setError("")
 
@@ -90,6 +111,7 @@ export function RoleAccessModal({ isOpen, onClose, targetRole, currentRole, onAc
       console.log("🔓 Role access granted:", {
         fromRole: currentRole,
         toRole: targetRole,
+        toRoleIndex: targetRoleIndex,
         duration: accessDuration,
         purpose: accessPurpose,
         grantedAt: new Date().toISOString(),
@@ -101,8 +123,11 @@ export function RoleAccessModal({ isOpen, onClose, targetRole, currentRole, onAc
         `✅ Role access granted!\n\nRole: ${targetRole}\nDuration: ${accessDuration}\nExpires: ${new Date(Date.now() + getDurationInMs(accessDuration)).toLocaleString()}\n\nPurpose: ${accessPurpose}`,
       )
 
-      onAccessGranted()
-      onClose()
+      // Call onAccessGranted with the specific role index
+      console.log("✅ Calling onAccessGranted with role index:", targetRoleIndex)
+      onAccessGranted(targetRoleIndex)
+
+      // Reset form
       setPassword("")
       setAccessPurpose("")
     } else {
@@ -134,20 +159,25 @@ export function RoleAccessModal({ isOpen, onClose, targetRole, currentRole, onAc
     return false
   }
 
+  // Don't render if modal is not open or if target role is invalid
+  if (!isOpen || !targetRole || targetRoleIndex < 0) {
+    return null
+  }
+
   if (canAccess()) {
     // Auto-grant access for same or lower level roles
+    console.log("✅ Auto-granting access for same/lower role")
     setTimeout(() => {
-      onAccessGranted()
-      onClose()
+      onAccessGranted(targetRoleIndex)
     }, 100)
     return null
   }
 
   if (!requirement) {
     // No special requirements for this role
+    console.log("✅ No special requirements, auto-granting access")
     setTimeout(() => {
-      onAccessGranted()
-      onClose()
+      onAccessGranted(targetRoleIndex)
     }, 100)
     return null
   }

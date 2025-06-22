@@ -10,7 +10,7 @@ import { GuestDashboard } from "./components/guest-dashboard"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
 import { RoleAccessModal } from "./components/role-access-modal"
-import { RoleSwitcher } from "./components/role-switcher"
+import { RoleSwitcherFinal } from "./components/role-switcher-final"
 
 interface KnowledgeHubProps {
   initialRole?: number
@@ -20,9 +20,18 @@ interface KnowledgeHubProps {
 export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHubProps) {
   console.log("🏗️ KnowledgeHub render - initialRole:", initialRole)
 
-  // Single source of truth for active role
+  // Validate and normalize initialRole
+  const getValidRole = (role: number) => {
+    if (typeof role === "number" && role >= 0 && role <= 4) {
+      return role
+    }
+    console.warn("⚠️ Invalid role provided:", role, "defaulting to 0")
+    return 0
+  }
+
+  // Single source of truth for active role - initialize once and don't change based on props
   const [activeRole, setActiveRole] = useState(() => {
-    const validRole = typeof initialRole === "number" && initialRole >= 0 && initialRole <= 4 ? initialRole : 0
+    const validRole = getValidRole(initialRole)
     console.log("🎯 Initial activeRole set to:", validRole)
     return validRole
   })
@@ -30,14 +39,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
   const [showElevationModal, setShowElevationModal] = useState(false)
   const [showAccessModal, setShowAccessModal] = useState(false)
   const [pendingRole, setPendingRole] = useState({ name: "", index: -1 })
-
-  // Update activeRole when initialRole changes (only on mount or prop change)
-  useEffect(() => {
-    if (typeof initialRole === "number" && initialRole >= 0 && initialRole <= 4 && initialRole !== activeRole) {
-      console.log("🔄 Updating activeRole from", activeRole, "to", initialRole)
-      setActiveRole(initialRole)
-    }
-  }, [initialRole]) // Remove activeRole from dependencies to prevent infinite loop
 
   // Handle role switch requests from dashboard buttons
   useEffect(() => {
@@ -59,16 +60,8 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
   const renderDashboard = () => {
     console.log("🎨 renderDashboard - activeRole:", activeRole)
 
-    // Ensure activeRole is valid
-    if (activeRole < 0 || activeRole > 4) {
-      console.log("⚠️ Invalid activeRole:", activeRole, "defaulting to 0")
-      setActiveRole(0)
-      return null
-    }
-
     switch (activeRole) {
       case 0:
-        console.log("✅ Rendering Employee Dashboard")
         return (
           <div>
             <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -78,7 +71,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           </div>
         )
       case 1:
-        console.log("✅ Rendering Contributor Dashboard")
         return (
           <div>
             <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -88,7 +80,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           </div>
         )
       case 2:
-        console.log("✅ Rendering Reviewer Dashboard")
         return (
           <div>
             <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
@@ -98,7 +89,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           </div>
         )
       case 3:
-        console.log("✅ Rendering Admin Dashboard")
         return (
           <div>
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -108,7 +98,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           </div>
         )
       case 4:
-        console.log("✅ Rendering Guest Dashboard")
         return (
           <div>
             <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
@@ -118,7 +107,6 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           </div>
         )
       default:
-        console.log("⚠️ Invalid role, rendering Employee Dashboard as fallback")
         return (
           <div>
             <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -132,23 +120,66 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
 
   const handleRequestAccess = (targetRole: string, targetIndex: number) => {
     console.log("🔐 Access requested for role:", targetRole, "index:", targetIndex)
-    setPendingRole({ name: targetRole, index: targetIndex })
-    setShowAccessModal(true)
+
+    if (targetIndex < 0 || targetIndex > 4) {
+      console.error("❌ Invalid target role index:", targetIndex)
+      return
+    }
+
+    if (!targetRole || targetRole.trim() === "") {
+      console.error("❌ Invalid target role name:", targetRole)
+      return
+    }
+
+    const newPendingRole = { name: targetRole, index: targetIndex }
+    console.log("✅ Setting pending role:", newPendingRole)
+    setPendingRole(newPendingRole)
+
+    setTimeout(() => {
+      console.log("✅ Opening access modal")
+      setShowAccessModal(true)
+    }, 50)
   }
 
-  const handleAccessGranted = () => {
-    console.log("🔓 Access granted, switching to role:", pendingRole.index)
-    if (pendingRole.index >= 0 && pendingRole.index <= 4) {
-      setActiveRole(pendingRole.index)
+  const handleAccessGranted = (grantedRoleIndex?: number) => {
+    console.log("🔓 Access granted called with:", { grantedRoleIndex, pendingRole })
+
+    const newRoleIndex = grantedRoleIndex !== undefined ? grantedRoleIndex : pendingRole.index
+
+    if (newRoleIndex < 0 || newRoleIndex > 4) {
+      console.error("❌ Invalid role index for access grant:", newRoleIndex)
+      setPendingRole({ name: "", index: -1 })
+      setShowAccessModal(false)
+      return
     }
+
+    console.log("✅ Setting activeRole to:", newRoleIndex)
+    setActiveRole(newRoleIndex)
+
     setPendingRole({ name: "", index: -1 })
+    setShowAccessModal(false)
   }
 
   const handleRoleChange = (newRoleIndex: number) => {
     console.log("🔄 Direct role change requested to:", newRoleIndex)
     if (newRoleIndex >= 0 && newRoleIndex <= 4) {
+      console.log("✅ Setting activeRole to:", newRoleIndex)
       setActiveRole(newRoleIndex)
+    } else {
+      console.error("❌ Invalid role index:", newRoleIndex)
     }
+  }
+
+  const handleModalClose = () => {
+    console.log("🚪 Access modal closing")
+    setShowAccessModal(false)
+    setPendingRole({ name: "", index: -1 })
+  }
+
+  const safeActiveRole = getValidRole(activeRole)
+  if (safeActiveRole !== activeRole) {
+    console.log("🔧 Correcting invalid activeRole from", activeRole, "to", safeActiveRole)
+    setActiveRole(safeActiveRole)
   }
 
   return (
@@ -163,18 +194,19 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
             <div>
               <h1 className="text-xl font-semibold text-gray-900">BrainBox</h1>
               <p className="text-sm text-gray-500">
-                Knowledge Hub - {roleLabels[activeRole]} (Index: {activeRole})
+                Knowledge Hub - {roleLabels[safeActiveRole]} (Index: {safeActiveRole})
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <RoleSwitcher
-              currentRole={activeRole}
+            <RoleSwitcherFinal
+              currentRole={safeActiveRole}
               userRoles={userRoles}
               onRoleChange={handleRoleChange}
               onRequestElevation={() => setShowElevationModal(true)}
               onRequestAccess={handleRequestAccess}
             />
+
             {onLogout && (
               <Button
                 variant="outline"
@@ -195,13 +227,14 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
       <RoleElevationModal
         isOpen={showElevationModal}
         onClose={() => setShowElevationModal(false)}
-        currentRole={roleLabels[activeRole]}
+        currentRole={roleLabels[safeActiveRole]}
       />
       <RoleAccessModal
         isOpen={showAccessModal}
-        onClose={() => setShowAccessModal(false)}
+        onClose={handleModalClose}
         targetRole={pendingRole.name}
-        currentRole={roleLabels[activeRole]}
+        targetRoleIndex={pendingRole.index}
+        currentRole={roleLabels[safeActiveRole]}
         onAccessGranted={handleAccessGranted}
       />
     </div>
