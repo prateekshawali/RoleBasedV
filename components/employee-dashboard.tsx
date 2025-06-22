@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, Bookmark, TrendingUp, Target, Clock, Star, Search, MessageCircle } from "lucide-react"
+import { BookOpen, Bookmark, TrendingUp, Target, Clock, Star, Search, MessageCircle, UserCheck } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,31 @@ export function EmployeeDashboard() {
           Ask a Question
         </Button>
       </div>
+
+      <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-blue-800">Need Different Access?</h3>
+              <p className="text-sm text-blue-600">Request elevated role permissions for specific tasks</p>
+            </div>
+            <Button
+              variant="outline"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              onClick={() => {
+                // This will be handled by the parent component
+                const event = new CustomEvent("requestRoleSwitch", {
+                  detail: { currentRole: "Employee" },
+                })
+                window.dispatchEvent(event)
+              }}
+            >
+              <UserCheck className="w-4 h-4 mr-2" />
+              Switch Role
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Quick Search */}
       <Card className="hover:shadow-lg transition-all duration-300">

@@ -1,6 +1,17 @@
 "use client"
 
-import { Shield, Users, Activity, AlertTriangle, BarChart3, Settings, Crown, FileText, RefreshCw } from "lucide-react"
+import {
+  Shield,
+  Users,
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Settings,
+  Crown,
+  FileText,
+  RefreshCw,
+  UserCheck,
+} from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -21,6 +32,30 @@ export function AdminDashboard() {
           System Settings
         </Button>
       </div>
+
+      <Card className="bg-gradient-to-r from-red-50 to-orange-50 border-red-200">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-red-800">Switch Role Context?</h3>
+              <p className="text-sm text-red-600">Switch to different role perspective for testing or support</p>
+            </div>
+            <Button
+              variant="outline"
+              className="border-red-300 text-red-700 hover:bg-red-100"
+              onClick={() => {
+                const event = new CustomEvent("requestRoleSwitch", {
+                  detail: { currentRole: "Admin" },
+                })
+                window.dispatchEvent(event)
+              }}
+            >
+              <UserCheck className="w-4 h-4 mr-2" />
+              Switch Role
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -53,88 +88,138 @@ export function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Role Management */}
-        <Card className="hover:shadow-lg transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-yellow-600" />
-              Role Elevation Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { user: "John Doe", from: "Employee", to: "Contributor", reason: "Wants to share expertise", days: 2 },
-              { user: "Jane Smith", from: "Contributor", to: "Reviewer", reason: "Cross-functional project", days: 1 },
-              { user: "Mike Johnson", from: "Employee", to: "Reviewer", reason: "Internship program", days: 3 },
-            ].map((request, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
-              >
-                <div>
-                  <h4 className="font-medium">{request.user}</h4>
-                  <p className="text-sm text-gray-600">
-                    {request.from} → {request.to} • {request.days} days ago
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">{request.reason}</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
-                    Approve
-                  </Button>
-                  <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
-                    Deny
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* System Activity */}
-        <Card className="hover:shadow-lg transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-green-600" />
-              System Activity Monitor
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              {[
-                { action: "User login", user: "sarah.wilson@company.com", time: "2 min ago", type: "info" },
-                { action: "Article published", user: "john.doe@company.com", time: "15 min ago", type: "success" },
-                { action: "Failed login attempt", user: "unknown@domain.com", time: "1 hour ago", type: "warning" },
-                { action: "Role updated", user: "admin@company.com", time: "2 hours ago", type: "info" },
-              ].map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      activity.type === "success"
-                        ? "bg-green-500"
-                        : activity.type === "warning"
-                          ? "bg-yellow-500"
-                          : "bg-blue-500"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-gray-600">
-                      {activity.user} • {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        {/* Enhanced Role Management Section */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900">Role Management</h2>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline">
+                <Settings className="w-4 h-4 mr-1" />
+                Role Settings
+              </Button>
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Crown className="w-4 h-4 mr-1" />
+                Bulk Actions
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
 
-      {/* Content Quality & User Engagement */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* Role Elevation Requests */}
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-yellow-600" />
+                  Role Elevation Requests
+                  <Badge variant="secondary" className="ml-auto">
+                    3 Pending
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[
+                  {
+                    user: "John Doe",
+                    from: "Employee",
+                    to: "Contributor",
+                    reason: "Wants to share expertise",
+                    days: 2,
+                  },
+                  {
+                    user: "Jane Smith",
+                    from: "Contributor",
+                    to: "Reviewer",
+                    reason: "Cross-functional project",
+                    days: 1,
+                  },
+                  { user: "Mike Johnson", from: "Employee", to: "Reviewer", reason: "Internship program", days: 3 },
+                ].map((request, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    <div>
+                      <h4 className="font-medium">{request.user}</h4>
+                      <p className="text-sm text-gray-600">
+                        {request.from} → {request.to} • {request.days} days ago
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{request.reason}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
+                        Approve
+                      </Button>
+                      <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                        Deny
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Active Role Sessions */}
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-green-600" />
+                  Active Role Sessions
+                  <Badge variant="secondary" className="ml-auto">
+                    12 Active
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[
+                  {
+                    user: "Alice Cooper",
+                    role: "Admin",
+                    originalRole: "Contributor",
+                    timeLeft: "1h 23m",
+                    purpose: "System maintenance",
+                  },
+                  {
+                    user: "Bob Wilson",
+                    role: "Reviewer",
+                    originalRole: "Employee",
+                    timeLeft: "45m",
+                    purpose: "Document review",
+                  },
+                  {
+                    user: "Carol Davis",
+                    role: "Contributor",
+                    originalRole: "Employee",
+                    timeLeft: "2h 15m",
+                    purpose: "Content creation",
+                  },
+                ].map((session, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-200"
+                  >
+                    <div>
+                      <h4 className="font-medium">{session.user}</h4>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">{session.role}</span>
+                        <span className="text-gray-400 mx-1">←</span>
+                        <span>{session.originalRole}</span>
+                      </p>
+                      <p className="text-xs text-gray-500">{session.purpose}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-blue-600">{session.timeLeft}</p>
+                      <Button size="sm" variant="outline" className="mt-1">
+                        Revoke
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Content Quality & User Engagement */}
         <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

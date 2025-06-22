@@ -25,12 +25,28 @@ export function RoleElevationModal({ isOpen, onClose, currentRole }: RoleElevati
   const [selectedRole, setSelectedRole] = useState("")
   const [reason, setReason] = useState("")
   const [duration, setDuration] = useState("")
+  const [purpose, setPurpose] = useState("")
+  const [urgency, setUrgency] = useState("normal")
 
   const availableRoles = ["Contributor", "Reviewer/Moderator", "Admin"].filter((role) => role !== currentRole)
 
   const handleSubmit = () => {
     // Handle role elevation request
-    console.log({ selectedRole, reason, duration })
+    console.log({
+      selectedRole,
+      reason,
+      duration,
+      purpose,
+      urgency,
+      requestedAt: new Date().toISOString(),
+      currentRole,
+    })
+
+    // Show success message
+    alert(
+      `Role elevation request submitted!\n\nRole: ${selectedRole}\nDuration: ${duration}\nUrgency: ${urgency}\n\nYour request will be reviewed by administrators.`,
+    )
+
     onClose()
   }
 
@@ -77,6 +93,31 @@ export function RoleElevationModal({ isOpen, onClose, currentRole }: RoleElevati
             </Select>
           </div>
           <div className="space-y-2">
+            <Label htmlFor="purpose">Purpose/Project Details</Label>
+            <Textarea
+              id="purpose"
+              placeholder="Describe the specific project or task requiring elevated access..."
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className="min-h-[80px]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="urgency">Request Urgency</Label>
+            <Select value={urgency} onValueChange={setUrgency}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select urgency level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low - Can wait for approval</SelectItem>
+                <SelectItem value="normal">Normal - Standard processing</SelectItem>
+                <SelectItem value="high">High - Urgent business need</SelectItem>
+                <SelectItem value="critical">Critical - Immediate access required</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="reason">Reason for Request</Label>
             <Textarea
               id="reason"
@@ -91,7 +132,7 @@ export function RoleElevationModal({ isOpen, onClose, currentRole }: RoleElevati
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!selectedRole || !reason || !duration}>
+          <Button onClick={handleSubmit} disabled={!selectedRole || !reason || !duration || !purpose}>
             Submit Request
           </Button>
         </DialogFooter>

@@ -33,6 +33,8 @@ export function RoleSwitcher({
     const targetRole = userRoles[index]
     const currentRoleName = userRoles[currentRole]
 
+    console.log("🎭 Role click:", { currentRole, currentRoleName, targetRole, targetIndex: index })
+
     // Define role hierarchy levels
     const roleHierarchy = {
       "Guest/Viewer": 0,
@@ -45,23 +47,26 @@ export function RoleSwitcher({
     const currentLevel = roleHierarchy[currentRoleName as keyof typeof roleHierarchy] || 0
     const targetLevel = roleHierarchy[targetRole as keyof typeof roleHierarchy] || 0
 
+    console.log("🔢 Role levels:", { currentLevel, targetLevel })
+
     // If trying to access a higher role, require authentication
     if (targetLevel > currentLevel) {
+      console.log("🔐 Higher role requested, requiring authentication")
       onRequestAccess(targetRole, index)
     } else {
       // Allow direct access to same or lower roles
+      console.log("✅ Direct access granted to same/lower role")
       onRoleChange(index)
     }
   }
+
+  const CurrentIcon = roleIcons[currentRole]
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="gap-2">
-          {(() => {
-            const IconComponent = roleIcons[currentRole]
-            return IconComponent ? <IconComponent className="w-4 h-4" /> : null
-          })()}
+          {CurrentIcon && <CurrentIcon className="w-4 h-4" />}
           {userRoles[currentRole]}
           <ChevronDown className="w-4 h-4" />
         </Button>
