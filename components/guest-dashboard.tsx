@@ -1,6 +1,6 @@
 "use client"
 
-import { Clock, Search, Eye, Lock, UserPlus, AlertCircle, UserCheck } from "lucide-react"
+import { Clock, Search, Eye, Lock, UserPlus, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -59,30 +59,6 @@ export function GuestDashboard() {
                 You have guest access with limited permissions. Contact your administrator for full access.
               </p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-r from-gray-50 to-blue-50 border-gray-200">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-gray-800">Need Full Access?</h3>
-              <p className="text-sm text-gray-600">Request elevated role permissions to access more features</p>
-            </div>
-            <Button
-              variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100"
-              onClick={() => {
-                const event = new CustomEvent("requestRoleSwitch", {
-                  detail: { currentRole: "Guest" },
-                })
-                window.dispatchEvent(event)
-              }}
-            >
-              <UserCheck className="w-4 h-4 mr-2" />
-              Request Access
-            </Button>
           </div>
         </CardContent>
       </Card>

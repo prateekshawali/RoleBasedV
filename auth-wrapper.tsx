@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Login } from "./components/login"
 import { Signup } from "./components/signup"
 import { ResetPassword } from "./components/reset-password"
@@ -11,6 +11,11 @@ type AuthView = "login" | "signup" | "reset-password" | "dashboard"
 export default function AuthWrapper() {
   const [currentView, setCurrentView] = useState<AuthView>("login")
   const [userRole, setUserRole] = useState<number>(0)
+
+  // Add debugging for state changes
+  useEffect(() => {
+    console.log("🔄 AuthWrapper - userRole state changed to:", userRole)
+  }, [userRole])
 
   const handleLogin = (role: string) => {
     console.log("🔑 handleLogin called with role:", role)
@@ -31,14 +36,18 @@ export default function AuthWrapper() {
 
     if (mappedRole === undefined) {
       console.error("❌ Unknown role:", role, "Available roles:", Object.keys(roleMap))
-      setUserRole(0) // Default to Employee
+      console.log("🔄 Setting userRole to 0 (Employee) as fallback")
+      setUserRole(0)
     } else {
       console.log("✅ Setting userRole to:", mappedRole)
       setUserRole(mappedRole)
     }
 
-    console.log("📱 Navigating to dashboard")
-    setCurrentView("dashboard")
+    // Add a small delay to ensure state is set before navigation
+    setTimeout(() => {
+      console.log("📱 Navigating to dashboard with userRole:", mappedRole !== undefined ? mappedRole : 0)
+      setCurrentView("dashboard")
+    }, 100)
   }
 
   const handleLogout = () => {
@@ -51,7 +60,7 @@ export default function AuthWrapper() {
 
   if (currentView === "dashboard") {
     console.log("🎨 Rendering KnowledgeHub with initialRole:", userRole)
-    return <KnowledgeHub initialRole={userRole} onLogout={handleLogout} />
+    return <KnowledgeHub key={userRole} initialRole={userRole} onLogout={handleLogout} />
   }
 
   switch (currentView) {

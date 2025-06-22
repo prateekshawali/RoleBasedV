@@ -1,18 +1,6 @@
 "use client"
 
-import {
-  Eye,
-  Clock,
-  Flag,
-  Users,
-  CheckCircle,
-  AlertTriangle,
-  FileText,
-  Star,
-  Activity,
-  BookOpen,
-  UserCheck,
-} from "lucide-react"
+import { Eye, Clock, Flag, Users, CheckCircle, AlertTriangle, FileText, Star, Activity, BookOpen } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -33,30 +21,6 @@ export function ReviewerDashboard() {
           Review Queue
         </Button>
       </div>
-
-      <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-purple-800">Need Different Access?</h3>
-              <p className="text-sm text-purple-600">Request elevated role permissions for specific tasks</p>
-            </div>
-            <Button
-              variant="outline"
-              className="border-purple-300 text-purple-700 hover:bg-purple-100"
-              onClick={() => {
-                const event = new CustomEvent("requestRoleSwitch", {
-                  detail: { currentRole: "Reviewer" },
-                })
-                window.dispatchEvent(event)
-              }}
-            >
-              <UserCheck className="w-4 h-4 mr-2" />
-              Switch Role
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -1,19 +1,6 @@
 "use client"
 
-import {
-  TrendingUp,
-  Clock,
-  Zap,
-  Star,
-  BookOpen,
-  Users,
-  Award,
-  Plus,
-  Send,
-  BarChart3,
-  FileText,
-  UserCheck,
-} from "lucide-react"
+import { TrendingUp, Clock, Zap, Star, BookOpen, Users, Award, Plus, Send, BarChart3, FileText } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -34,30 +21,6 @@ export function ContributorDashboard() {
           Write with AI Assistant
         </Button>
       </div>
-
-      <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-green-800">Need Different Access?</h3>
-              <p className="text-sm text-green-600">Request elevated role permissions for specific tasks</p>
-            </div>
-            <Button
-              variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-100"
-              onClick={() => {
-                const event = new CustomEvent("requestRoleSwitch", {
-                  detail: { currentRole: "Contributor" },
-                })
-                window.dispatchEvent(event)
-              }}
-            >
-              <UserCheck className="w-4 h-4 mr-2" />
-              Switch Role
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

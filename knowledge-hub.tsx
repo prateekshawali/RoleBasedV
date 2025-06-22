@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { RoleSwitcher } from "./components/role-switcher"
 import { ContributorDashboard } from "./components/contributor-dashboard"
 import { ReviewerDashboard } from "./components/reviewer-dashboard"
 import { EmployeeDashboard } from "./components/employee-dashboard"
@@ -10,7 +11,6 @@ import { GuestDashboard } from "./components/guest-dashboard"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
 import { RoleAccessModal } from "./components/role-access-modal"
-import { RoleSwitcher } from "./components/role-switcher"
 
 interface KnowledgeHubProps {
   initialRole?: number
@@ -18,12 +18,12 @@ interface KnowledgeHubProps {
 }
 
 export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHubProps) {
-  console.log("🏗️ KnowledgeHub render - initialRole:", initialRole)
+  console.log("🏗️ KnowledgeHub constructor - initialRole received:", initialRole)
 
-  // Single source of truth for active role
+  // Force re-initialization when initialRole changes
   const [activeRole, setActiveRole] = useState(() => {
     const validRole = typeof initialRole === "number" && initialRole >= 0 && initialRole <= 4 ? initialRole : 0
-    console.log("🎯 Initial activeRole set to:", validRole)
+    console.log("🎯 KnowledgeHub - Initial activeRole set to:", validRole, "from initialRole:", initialRole)
     return validRole
   })
 
@@ -31,40 +31,29 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
   const [showAccessModal, setShowAccessModal] = useState(false)
   const [pendingRole, setPendingRole] = useState({ name: "", index: -1 })
 
-  // Update activeRole when initialRole changes (only on mount or prop change)
+  // Force update activeRole when initialRole changes
   useEffect(() => {
-    if (typeof initialRole === "number" && initialRole >= 0 && initialRole <= 4 && initialRole !== activeRole) {
-      console.log("🔄 Updating activeRole from", activeRole, "to", initialRole)
+    console.log("🔄 KnowledgeHub useEffect - initialRole changed to:", initialRole)
+    if (typeof initialRole === "number" && initialRole >= 0 && initialRole <= 4) {
+      console.log("✅ Updating activeRole from", activeRole, "to", initialRole)
       setActiveRole(initialRole)
+    } else {
+      console.log("⚠️ Invalid initialRole:", initialRole, "keeping activeRole:", activeRole)
     }
-  }, [initialRole]) // Remove activeRole from dependencies to prevent infinite loop
+  }, [initialRole])
 
-  // Handle role switch requests from dashboard buttons
+  // Debug activeRole changes
   useEffect(() => {
-    const handleRoleSwitchRequest = (event: CustomEvent) => {
-      console.log("🔄 Role switch requested from dashboard:", event.detail)
-      setShowElevationModal(true)
-    }
+    console.log("🎭 activeRole state changed to:", activeRole)
+  }, [activeRole])
 
-    window.addEventListener("requestRoleSwitch", handleRoleSwitchRequest as EventListener)
-
-    return () => {
-      window.removeEventListener("requestRoleSwitch", handleRoleSwitchRequest as EventListener)
-    }
-  }, [])
+  console.log("🖥️ KnowledgeHub render - initialRole:", initialRole, "activeRole:", activeRole)
 
   const userRoles = ["Employee (Reader)", "Contributor", "Reviewer/Moderator", "Admin", "Guest/Viewer"]
   const roleLabels = ["Employee (Reader)", "Contributor", "Reviewer/Moderator", "Admin", "Guest/Viewer"]
 
   const renderDashboard = () => {
-    console.log("🎨 renderDashboard - activeRole:", activeRole)
-
-    // Ensure activeRole is valid
-    if (activeRole < 0 || activeRole > 4) {
-      console.log("⚠️ Invalid activeRole:", activeRole, "defaulting to 0")
-      setActiveRole(0)
-      return null
-    }
+    console.log("🎨 renderDashboard called with activeRole:", activeRole)
 
     switch (activeRole) {
       case 0:
@@ -73,6 +62,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-blue-800 font-medium">🔵 Employee Dashboard (Role Index: 0)</p>
+              <p className="text-blue-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <EmployeeDashboard />
           </div>
@@ -83,6 +75,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-green-800 font-medium">🟢 Contributor Dashboard (Role Index: 1)</p>
+              <p className="text-green-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <ContributorDashboard />
           </div>
@@ -93,6 +88,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
               <p className="text-purple-800 font-medium">🟣 Reviewer Dashboard (Role Index: 2)</p>
+              <p className="text-purple-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <ReviewerDashboard />
           </div>
@@ -103,6 +101,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-800 font-medium">🔴 Admin Dashboard (Role Index: 3)</p>
+              <p className="text-red-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <AdminDashboard />
           </div>
@@ -113,6 +114,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <p className="text-gray-800 font-medium">⚫ Guest Dashboard (Role Index: 4)</p>
+              <p className="text-gray-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <GuestDashboard />
           </div>
@@ -123,6 +127,9 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
           <div>
             <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-yellow-800 font-medium">⚠️ Fallback Employee Dashboard (Invalid Role: {activeRole})</p>
+              <p className="text-yellow-600 text-sm">
+                initialRole: {initialRole}, activeRole: {activeRole}
+              </p>
             </div>
             <EmployeeDashboard />
           </div>
@@ -131,24 +138,19 @@ export default function KnowledgeHub({ initialRole = 0, onLogout }: KnowledgeHub
   }
 
   const handleRequestAccess = (targetRole: string, targetIndex: number) => {
-    console.log("🔐 Access requested for role:", targetRole, "index:", targetIndex)
     setPendingRole({ name: targetRole, index: targetIndex })
     setShowAccessModal(true)
   }
 
   const handleAccessGranted = () => {
     console.log("🔓 Access granted, switching to role:", pendingRole.index)
-    if (pendingRole.index >= 0 && pendingRole.index <= 4) {
-      setActiveRole(pendingRole.index)
-    }
+    setActiveRole(pendingRole.index)
     setPendingRole({ name: "", index: -1 })
   }
 
   const handleRoleChange = (newRoleIndex: number) => {
-    console.log("🔄 Direct role change requested to:", newRoleIndex)
-    if (newRoleIndex >= 0 && newRoleIndex <= 4) {
-      setActiveRole(newRoleIndex)
-    }
+    console.log("🔄 Role change requested to:", newRoleIndex)
+    setActiveRole(newRoleIndex)
   }
 
   return (
