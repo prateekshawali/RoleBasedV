@@ -3,10 +3,10 @@
 import { useState } from "react"
 import { Login } from "./components/login"
 import { Signup } from "./components/signup"
-import { ResetPassword } from "./components/reset-password"
+import { ForgotPassword } from "./components/forgot-password"
 import KnowledgeHub from "./knowledge-hub"
 
-type AuthView = "login" | "signup" | "reset-password" | "dashboard"
+type AuthView = "login" | "signup" | "forgot-password" | "dashboard"
 
 export default function AuthWrapper() {
   const [currentView, setCurrentView] = useState<AuthView>("login")
@@ -69,10 +69,10 @@ export default function AuthWrapper() {
               Sign Up
             </button>
             <button
-              onClick={() => setCurrentView("reset-password")}
+              onClick={() => setCurrentView("forgot-password")}
               className="px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/40 rounded-lg hover:bg-blue-500/30 transition-colors"
             >
-              Reset Password
+              Forgot Password
             </button>
           </div>
         </div>
@@ -91,10 +91,10 @@ export default function AuthWrapper() {
           </div>
         </div>
       )
-    case "reset-password":
+    case "forgot-password":
       return (
         <div>
-          <ResetPassword onSuccess={() => setCurrentView("login")} onNavigate={setCurrentView} />
+          <ForgotPassword onSuccess={() => setCurrentView("login")} onNavigate={setCurrentView} />
           <div className="fixed bottom-4 right-4 z-50">
             <button
               onClick={() => setCurrentView("login")}

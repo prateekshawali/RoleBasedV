@@ -13,7 +13,7 @@ import { AlertCircle, Loader2 } from "lucide-react"
 
 interface LoginProps {
   onLogin?: (role: string) => void
-  onNavigate?: (view: "login" | "signup" | "reset-password") => void
+  onNavigate?: (view: "login" | "signup" | "reset-password" | "forgot-password") => void
 }
 
 export function Login({ onLogin, onNavigate }: LoginProps) {
@@ -186,7 +186,7 @@ export function Login({ onLogin, onNavigate }: LoginProps) {
               </div>
               <button
                 type="button"
-                onClick={() => onNavigate?.("reset-password")}
+                onClick={() => onNavigate?.("forgot-password")}
                 className="text-sm text-green-400 hover:text-green-300 transition-colors"
               >
                 Forgot Password?
