@@ -43,7 +43,7 @@ export function ReviewerDashboard() {
             </div>
             <Button
               variant="outline"
-              className="border-purple-300 text-purple-700 hover:bg-purple-100"
+              className="border-purple-300 text-purple-700 hover:bg-purple-100 bg-transparent"
               onClick={() => {
                 const event = new CustomEvent("requestRoleSwitch", {
                   detail: { currentRole: "Reviewer" },

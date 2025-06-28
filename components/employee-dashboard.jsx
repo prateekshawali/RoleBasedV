@@ -32,7 +32,7 @@ export function EmployeeDashboard() {
             </div>
             <Button
               variant="outline"
-              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100 bg-transparent"
               onClick={() => {
                 // This will be handled by the parent component
                 const event = new CustomEvent("requestRoleSwitch", {

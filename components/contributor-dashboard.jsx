@@ -18,8 +18,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { AIWritingAssistant } from "./ai-writing-assistant"
+import { useState } from "react"
 
 export function ContributorDashboard() {
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false)
+
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500">
       <div className="flex items-center justify-between">
@@ -29,7 +33,10 @@ export function ContributorDashboard() {
           </h1>
           <p className="text-gray-600 mt-1">Your contribution dashboard</p>
         </div>
-        <Button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-200">
+        <Button
+          className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-200"
+          onClick={() => setIsAIAssistantOpen(true)}
+        >
           <Zap className="w-4 h-4 mr-2" />
           Write with AI Assistant
         </Button>
@@ -44,7 +51,7 @@ export function ContributorDashboard() {
             </div>
             <Button
               variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-100"
+              className="border-green-300 text-green-700 hover:bg-green-100 bg-transparent"
               onClick={() => {
                 const event = new CustomEvent("requestRoleSwitch", {
                   detail: { currentRole: "Contributor" },
@@ -177,7 +184,10 @@ export function ContributorDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+        <Card
+          className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+          onClick={() => setIsAIAssistantOpen(true)}
+        >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition-colors">
               <Plus className="w-6 h-6 text-green-600" />
@@ -217,7 +227,7 @@ export function ContributorDashboard() {
                 <FileText className="w-5 h-5 text-blue-600" />
                 My Articles
               </CardTitle>
-              <Button size="sm" className="bg-gray-900 hover:bg-gray-800">
+              <Button size="sm" className="bg-gray-900 hover:bg-gray-800" onClick={() => setIsAIAssistantOpen(true)}>
                 <Plus className="w-4 h-4 mr-1" />
                 New Article
               </Button>
@@ -280,6 +290,9 @@ export function ContributorDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Writing Assistant */}
+      <AIWritingAssistant isOpen={isAIAssistantOpen} onClose={() => setIsAIAssistantOpen(false)} />
     </div>
   )
 }

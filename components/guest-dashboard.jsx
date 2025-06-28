@@ -17,7 +17,7 @@ export function GuestDashboard() {
     return () => clearInterval(timer)
   }, [])
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     return `${hours} hours ${minutes} minutes`
@@ -72,7 +72,7 @@ export function GuestDashboard() {
             </div>
             <Button
               variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100"
+              className="border-gray-300 text-gray-700 hover:bg-gray-100 bg-transparent"
               onClick={() => {
                 const event = new CustomEvent("requestRoleSwitch", {
                   detail: { currentRole: "Guest" },
@@ -193,7 +193,7 @@ export function GuestDashboard() {
           </p>
           <div className="flex gap-3">
             <Button className="bg-blue-600 hover:bg-blue-700">Request Employee Access</Button>
-            <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+            <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent">
               Contact Administrator
             </Button>
           </div>

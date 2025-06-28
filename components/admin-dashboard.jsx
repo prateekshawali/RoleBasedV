@@ -42,7 +42,7 @@ export function AdminDashboard() {
             </div>
             <Button
               variant="outline"
-              className="border-red-300 text-red-700 hover:bg-red-100"
+              className="border-red-300 text-red-700 hover:bg-red-100 bg-transparent"
               onClick={() => {
                 const event = new CustomEvent("requestRoleSwitch", {
                   detail: { currentRole: "Admin" },
@@ -146,10 +146,18 @@ export function AdminDashboard() {
                       <p className="text-xs text-gray-500 mt-1">{request.reason}</p>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
+                      >
                         Approve
                       </Button>
-                      <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
+                      >
                         Deny
                       </Button>
                     </div>
@@ -208,7 +216,7 @@ export function AdminDashboard() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-blue-600">{session.timeLeft}</p>
-                      <Button size="sm" variant="outline" className="mt-1">
+                      <Button size="sm" variant="outline" className="mt-1 bg-transparent">
                         Revoke
                       </Button>
                     </div>
